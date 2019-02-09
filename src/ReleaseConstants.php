@@ -49,8 +49,6 @@ class ReleaseConstants
     const LANGUAGE_MULTI = 'MULTI';
     const LANGUAGE_DEFAULT = 'VO';
 
-    const FLAG = 'flag';
-
     const SOURCES = [
         self::SOURCE_CAM => [
             'cam',
@@ -344,9 +342,6 @@ class ReleaseConstants
                 break;
             case self::RESOLUTION :
                 $constant = self::RESOLUTIONS;
-                break;
-            case self::FLAG:
-                $constant = self::FLAGS;
                 break;
             case self::ENCODING:
                 $constant = self::ENCODINGS;
