@@ -9,6 +9,9 @@
         <blacklist>
               <directory>./vendor</directory>
         </blacklist>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+        </whitelist>
     </filter>
     <logging>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
