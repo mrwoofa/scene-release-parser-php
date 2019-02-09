@@ -4,6 +4,7 @@
 
   use Mhor\MediaInfo\MediaInfo;
   use InvalidArgumentException;
+  use thcolin\SceneReleaseParser\ReleaseConstants as SrpRc;
 
   class Release{
 
@@ -348,9 +349,9 @@
 
     public function __construct($name, $strict = true, $defaults = []){
       foreach($defaults as $key => $default){
-        $const = $key.'Static';
+        $const = SrpRc::getConstantByAttributeName($key);
 
-        if(property_exists(get_class(), $const) && !in_array($default, array_keys(self::$$const))){
+        if($const !== [] && !in_array($default, array_keys($const))){
           trigger_error('Default "'.$key.'" should be a value from Release::$'.$const);
         }
       }
@@ -413,8 +414,8 @@
         $this -> getYear(),
         ($this -> getSeason() ? 'S'.sprintf('%02d', $this -> getSeason()):'').
         ($this -> getEpisode() ? 'E'.sprintf('%02d', $this -> getEpisode()):''),
-        ($this -> getLanguage() !== self::LANGUAGE_DEFAULT ? $this -> getLanguage():''),
-        ($this -> getResolution() !== self::RESOLUTION_SD ? $this -> getResolution():''),
+        ($this -> getLanguage() !== SrpRc::LANGUAGE_DEFAULT ? $this -> getLanguage():''),
+        ($this -> getResolution() !== SrpRc::RESOLUTION_SD ? $this -> getResolution():''),
         $this -> getSource(),
         $this -> getEncoding(),
         $this -> getDub()
@@ -451,51 +452,42 @@
         if($codec = $video -> get('encoded_library_name')){
           switch($codec){
             case 'DivX':
-              $release -> setEncoding(self::ENCODING_DIVX);
-              continue;
-            break;
+              $release -> setEncoding(SrpRc::ENCODING_DIVX);
+                break;
             case 'x264':
-              $release -> setEncoding(self::ENCODING_X264);
-              continue;
-            break;
+              $release -> setEncoding(SrpRc::ENCODING_X264);
+                break;
             case 'x265':
-              $release -> setEncoding(self::ENCODING_X265);
-              continue;
-            break;
+              $release -> setEncoding(SrpRc::ENCODING_X265);
+                break;
           }
         }
 
         if($codec = $video -> get('writing_library_name')){
           switch($codec){
             case 'DivX':
-              $release -> setEncoding(self::ENCODING_DIVX);
-              continue;
-            break;
+              $release -> setEncoding(SrpRc::ENCODING_DIVX);
+                break;
             case 'x264':
-              $release -> setEncoding(self::ENCODING_X264);
-              continue;
-            break;
+              $release -> setEncoding(SrpRc::ENCODING_X264);
+                break;
             case 'x265':
-              $release -> setEncoding(self::ENCODING_X265);
-              continue;
-            break;
+              $release -> setEncoding(SrpRc::ENCODING_X265);
+                break;
           }
         }
 
         if($codec = $video -> get('codec_cc')){
           switch($codec){
             case 'DIVX':
-              $release -> setEncoding(self::ENCODING_DIVX);
-              continue;
-            break;
+              $release -> setEncoding(SrpRc::ENCODING_DIVX);
+                break;
             case 'XVID':
-              $release -> setEncoding(self::ENCODING_XVID);
-              continue;
+              $release -> setEncoding(SrpRc::ENCODING_XVID);
             break;
-            case 'hvc1':
-              $release -> setEncoding(self::ENCODING_X265);
-              continue;
-            break;
+                case 'hvc1':
+              $release -> setEncoding(SrpRc::ENCODING_X265);
+                break;
           }
         }
 
@@ -503,9 +495,8 @@
           if($codec = $video -> get('internet_media_type')){
             switch($codec){
               case 'video/H264':
-                $release -> setEncoding(self::ENCODING_H264);
-                continue;
-              break;
+                $release -> setEncoding(SrpRc::ENCODING_H264);
+                break;
             }
           }
         }
@@ -516,11 +507,11 @@
           $width = $video -> get('width') -> getAbsoluteValue();
 
           if($height >= 1000 || $width >= 1900){
-            $release -> setResolution(self::RESOLUTION_1080P);
+            $release -> setResolution(SrpRc::RESOLUTION_1080P);
           } else if($height >= 700 || $width >= 1200){
-            $release -> setResolution(self::RESOLUTION_720P);
+            $release -> setResolution(SrpRc::RESOLUTION_720P);
           } else{
-            $release -> setResolution(self::RESOLUTION_SD);
+            $release -> setResolution(SrpRc::RESOLUTION_SD);
           }
         }
       }
@@ -529,7 +520,7 @@
       $audios = $container -> getAudios();
 
       if(count($audios) > 1){
-        $release -> setLanguage(self::LANGUAGE_MULTI);
+        $release -> setLanguage(SrpRc::LANGUAGE_MULTI);
       } else if(count($audios) > 0){
         $languages = $audios[0] -> get('language');
         if($languages){
@@ -539,15 +530,15 @@
 
       if(!$release -> getLanguage()){
         // default : VO
-        $release -> setLanguage(self::LANGUAGE_DEFAULT);
+        $release -> setLanguage(SrpRc::LANGUAGE_DEFAULT);
       }
 
       return $release;
     }
 
-    public function getRelease($mode = self::ORIGINAL_RELEASE){
+    public function getRelease($mode = SrpRc::ORIGINAL_RELEASE){
       switch($mode){
-        case self::GENERATED_RELEASE:
+        case SrpRc::GENERATED_RELEASE:
           return $this -> __toString();
         break;
         default:
@@ -583,13 +574,12 @@
     }
 
     private function parseAttribute(&$title, $attribute){
-      if(!in_array($attribute, [self::SOURCE, self::ENCODING, self::RESOLUTION, self::DUB])){
+      if(!in_array($attribute, [SrpRc::SOURCE, SrpRc::ENCODING, SrpRc::RESOLUTION, SrpRc::DUB])){
         throw new InvalidArgumentException();
       }
 
-      $attributes = $attribute.'Static';
-
-      foreach(self::$$attributes as $key => $patterns){
+      $attributes = SrpRc::getConstantByAttributeName($attribute);
+      foreach($attributes as $key => $patterns){
         if(!is_array($patterns)){
           $patterns = [$patterns];
         }
@@ -613,7 +603,7 @@
       $type = null;
 
       $title = preg_replace_callback('#[\.\-]S(\d+)[\.\-]?(E(\d+))?([\.\-])#i', function($matches) use (&$type){
-        $type = self::TVSHOW;
+        $type = SrpRc::TVSHOW;
         // 01 -> 1 (numeric)
         $this -> setSeason(intval($matches[1]));
 
@@ -636,7 +626,7 @@
         }
 
         // movie
-        $type = self::MOVIE;
+        $type = SrpRc::MOVIE;
       }
 
       return $type;
@@ -704,7 +694,7 @@
     private function parseLanguage(&$title){
       $languages = [];
 
-      foreach(self::$languageStatic as $langue => $patterns){
+      foreach(SrpRc::LANGUAGES as $langue => $patterns){
         if(!is_array($patterns)){
           $patterns = [$patterns];
         }
@@ -721,7 +711,7 @@
       if(count($languages) == 1){
         return $languages[0];
       } else if(count($languages) > 1){
-        return self::LANGUAGE_MULTI;
+        return SrpRc::LANGUAGE_MULTI;
       } else{
         return null;
       }
@@ -733,7 +723,7 @@
       } else if(isset($this -> defaults['language'])){
         return $this -> defaults['language'];
       } else {
-        return self::LANGUAGE_DEFAULT;
+        return SrpRc::LANGUAGE_DEFAULT;
       }
     }
 
@@ -746,18 +736,18 @@
     }
 
     private function parseResolution(&$title){
-      return $this -> parseAttribute($title, self::RESOLUTION);
+      return $this -> parseAttribute($title, SrpRc::RESOLUTION);
     }
 
     public function guessResolution(){
       if($this -> resolution){
         return $this -> resolution;
-      } else if($this->getSource() == self::SOURCE_BLURAY || $this->getSource() == self::SOURCE_BDSCR){
-        return self::RESOLUTION_1080P;
+      } else if($this->getSource() == SrpRc::SOURCE_BLURAY || $this->getSource() == SrpRc::SOURCE_BDSCR){
+        return SrpRc::RESOLUTION_1080P;
       } else if(isset($this -> defaults['resolution'])){
         return $this -> defaults['resolution'];
       } else {
-        return self::RESOLUTION_SD;
+        return SrpRc::RESOLUTION_SD;
       }
     }
 
@@ -770,7 +760,7 @@
     }
 
     private function parseSource(&$title){
-      return $this -> parseAttribute($title, self::SOURCE);
+      return $this -> parseAttribute($title, SrpRc::SOURCE);
     }
 
     public function setSource($source){
@@ -782,7 +772,7 @@
     }
 
     private function parseDub(&$title){
-      return $this -> parseAttribute($title, self::DUB);
+      return $this -> parseAttribute($title, SrpRc::DUB);
     }
 
     public function setDub($dub){
@@ -794,7 +784,7 @@
     }
 
     private function parseEncoding(&$title){
-      return $this -> parseAttribute($title, self::ENCODING);
+      return $this -> parseAttribute($title, SrpRc::ENCODING);
     }
 
     public function setEncoding($encoding){
@@ -863,7 +853,7 @@
     private function parseFlags(&$title){
       $flags = [];
 
-      foreach(self::$flagsStatic as $key => $patterns){
+      foreach(SrpRc::FLAGS as $key => $patterns){
         if(!is_array($patterns)){
           $patterns = [$patterns];
         }
@@ -898,5 +888,3 @@
     }
 
   }
-
-?>

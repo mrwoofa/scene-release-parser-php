@@ -1,11 +1,13 @@
 <?php
 
   use thcolin\SceneReleaseParser\Release;
+  use thcolin\SceneReleaseParser\ReleaseConstants as SrpRc;
   use PHPUnit\Framework\TestCase;
   use PHPUnit\Framework\Error\Notice;
-  use PHPUnit\Framework\Error\Error;
 
   class ReleaseTest extends TestCase{
+
+    private $elements;
 
     public static function setUpBeforeClass(){
       if(PHP_OS === 'Darwin'){
@@ -28,33 +30,33 @@
     public function testAnalyseSuccess(){
       $elements = [
         'https://www.quirksmode.org/html5/videos/big_buck_bunny.mp4' => [
-          'encoding' => Release::ENCODING_H264,
-          'resolution' => Release::RESOLUTION_SD,
+          'encoding' => SrpRc::ENCODING_H264,
+          'resolution' => SrpRc::RESOLUTION_SD,
           'language' => 'ENGLISH'
         ],
         'https://samples.mplayerhq.hu/V-codecs/h264/bbc-africa_m720p.mov' => [
-          'encoding' => Release::ENCODING_H264,
-          'resolution' => Release::RESOLUTION_720P,
+          'encoding' => SrpRc::ENCODING_H264,
+          'resolution' => SrpRc::RESOLUTION_720P,
           'language' => 'ENGLISH'
         ],
         'https://cinelerra-cv.org/footage/rassegna2.avi' => [
-          'encoding' => Release::ENCODING_DIVX,
-          'resolution' => Release::RESOLUTION_SD,
+          'encoding' => SrpRc::ENCODING_DIVX,
+          'resolution' => SrpRc::RESOLUTION_SD,
           'language' => 'VO'
         ],
         'https://samples.mplayerhq.hu/V-codecs/XVID/old/green.avi' => [
-          'encoding' => Release::ENCODING_XVID,
-          'resolution' => Release::RESOLUTION_SD,
+          'encoding' => SrpRc::ENCODING_XVID,
+          'resolution' => SrpRc::RESOLUTION_SD,
           'language' => 'VO'
         ],
         'http://samples.mplayerhq.hu/Matroska/x264_no-b-frames.mkv' => [
-          'encoding' => Release::ENCODING_X264,
-          'resolution' => Release::RESOLUTION_720P,
+          'encoding' => SrpRc::ENCODING_X264,
+          'resolution' => SrpRc::RESOLUTION_720P,
           'language' => 'VO'
         ],
         'https://s3.amazonaws.com/x265.org/video/Tears_400_x265.mp4' => [
-          'encoding' => Release::ENCODING_X265,
-          'resolution' => Release::RESOLUTION_1080P,
+          'encoding' => SrpRc::ENCODING_X265,
+          'resolution' => SrpRc::RESOLUTION_1080P,
           'language' => 'VO'
         ],
       ];
@@ -99,7 +101,7 @@
     public function testGetGeneratedRelease(){
       foreach($this -> elements as $element){
         if(isset($element['generated'])){
-          $this -> assertEquals($element['generated'], $element['object'] -> getRelease(Release::GENERATED_RELEASE), json_encode($element));
+          $this -> assertEquals($element['generated'], $element['object'] -> getRelease(SrpRc::GENERATED_RELEASE), json_encode($element));
           $this -> assertEquals($element['generated'], $element['object'] -> __toString(), json_encode($element));
         }
       }
@@ -279,5 +281,3 @@
     }
 
   }
-
-?>
