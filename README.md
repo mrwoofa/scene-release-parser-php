@@ -1,8 +1,6 @@
 # Scene Release Parser
 
-[![Build Status](https://travis-ci.org/thcolin/scene-release-parser.svg?branch=master)](https://travis-ci.org/thcolin/scene-release-parser)
-[![Code Climate](https://codeclimate.com/github/thcolin/scene-release-parser/badges/gpa.svg)](https://codeclimate.com/github/thcolin/scene-release-parser)
-[![Test Coverage](https://codeclimate.com/github/thcolin/scene-release-parser/badges/coverage.svg)](https://codeclimate.com/github/thcolin/scene-release-parser/coverage)
+[![Build Status](https://travis-ci.org/120hz2c3d/scene-release-parser-php.svg?branch=master)](https://travis-ci.org/120hz2c3d/scene-release-parser-php)
 
 PHP Library parsing a scene release name to retrieve title and tags (original from [majestixx/scene-release-parser-php-lib](https://github.com/majestixx/scene-release-parser-php-lib)).
 
