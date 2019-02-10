@@ -11,8 +11,10 @@
   use Symfony\Component\Console\Question\ChoiceQuestion;
   use thcolin\SceneReleaseParser\Release;
   use Exception;
+use thcolin\SceneReleaseParser\ReleaseConstants;
+use thcolin\SceneReleaseParser\ReleaseMediaInfo;
 
-  class RenamerCommand extends ContainerAwareCommand{
+class RenamerCommand extends ContainerAwareCommand{
 
     protected function configure(){
       $this
@@ -108,7 +110,7 @@
       foreach($targets as $target => $path){
         try{
           try{
-            $release = Release::analyse($path, $mediainfo);
+            $release = ReleaseMediaInfo::analyse($path, $mediainfo);
           } catch(Exception $e){
             $release = new Release($target, true, $defaults);
           }
@@ -248,7 +250,7 @@
             $release -> setYear($value);
           break;
           case 'language':
-            $values = array_keys(Release::$languageStatic);
+            $values = array_keys(ReleaseConstants::LANGUAGES);
             $question = new Question('<question>Replace old language :</question> ');
             $question -> setAutocompleterValues($values);
             $question -> setValidator(function($answer) use ($values){
@@ -268,7 +270,7 @@
             $release -> setLanguage($value);
           break;
           case 'resolution':
-            $values = array_keys(Release::$resolutionStatic);
+            $values = array_keys(ReleaseConstants::RESOLUTIONS);
             $question = new ChoiceQuestion('<question>Select resolution :</question> ', $values);
             $question -> setAutocompleterValues($values);
             $question -> setValidator(function($answer) use ($values){
@@ -286,7 +288,7 @@
             $release -> setResolution($value);
           break;
           case 'source':
-            $values = array_keys(Release::$sourceStatic);
+            $values = array_keys(ReleaseConstants::SOURCES);
             $question = new ChoiceQuestion('<question>Select source :</question> ', $values);
             $question -> setAutocompleterValues($values);
             $question -> setValidator(function($answer) use ($values){
@@ -304,7 +306,7 @@
             $release -> setSource($value);
           break;
           case 'dub':
-            $values = array_keys(Release::$dubStatic);
+            $values = array_keys(ReleaseConstants::DUBS);
             $question = new ChoiceQuestion('<question>Select dub :</question> ', $values);
             $question -> setAutocompleterValues($values);
             $question -> setValidator(function($answer) use ($values){
@@ -322,7 +324,7 @@
             $release -> setDub($value);
           break;
           case 'encoding':
-            $values = array_keys(Release::$encodingStatic);
+            $values = array_keys(ReleaseConstants::ENCODINGS);
             $question = new ChoiceQuestion('<question>Select encoding :</question> ', $values);
             $question -> setAutocompleterValues($values);
             $question -> setValidator(function($answer) use ($values){
