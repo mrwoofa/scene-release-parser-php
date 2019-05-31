@@ -88,7 +88,7 @@ class Release
                      $this->getTitle(),
                      $this->getYear(),
                      ($this->getSeason() ? 'S' . sprintf('%02d', $this->getSeason()) : '') .
-                     ($this->getEpisode() ? 'E' . sprintf('%02d', $this->getEpisode()) : ''),
+                     ($this->getEpisode() ? $this->getEpisode() : ''),
                      ($this->getLanguage() !== SrpRc::LANGUAGE_DEFAULT ? $this->getLanguage() : ''),
                      ($this->getResolution() !== SrpRc::RESOLUTION_SD ? $this->getResolution() : ''),
                      $this->getSource(),
@@ -176,14 +176,15 @@ class Release
     {
         $type = null;
 
-        $title = preg_replace_callback('#[\.\-]S(\d+)[\.\-]?(E(\d+))?([\.\-])#i', function ($matches) use (&$type) {
+        $title = preg_replace_callback('#[\.\-]S(\d+)[\.\-]?((E(\d+)?)(E(\d+))?)([\.\-])#i', function ($matches) use (&$type) {
             $type = SrpRc::TVSHOW;
             // 01 -> 1 (numeric)
             $this->setSeason(intval($matches[1]));
 
-            if ($matches[3]) {
-                $this->setEpisode(intval($matches[3]));
+            if ($matches[2]) {
+                $this->setEpisode($matches[2]);
             }
+
             return $matches[4];
         }, $title, 1, $count);
 
