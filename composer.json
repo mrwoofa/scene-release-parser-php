@@ -15,8 +15,8 @@
     },
     "require": {
         "mhor/php-mediainfo": "~2.1",
-        "symfony/console": "^3.2",
-        "symfony/framework-bundle": "^3.2",
+        "symfony/console": "4.3.*",
+        "symfony/framework-bundle": "4.3.*",
         "ext-json": "*"
     },
     "require-dev": {
