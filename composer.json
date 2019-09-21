@@ -14,7 +14,6 @@
 	    }
     },
     "require": {
-        "mhor/php-mediainfo": "~2.1",
         "ext-json": "*"
     },
     "require-dev": {
